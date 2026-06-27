@@ -69,8 +69,19 @@ SELECT
 	
 	
 	<select id="cateGoodsList" parameterType="hashmap" resultType="hashmap"> <!-- 상품 카테고리별 리스트  -->
-		<include refid="common.pagingPre2"/>
-			SELECT GS.GOODS_NO,
+		SELECT AAA.*
+		FROM (
+			SELECT
+				COUNT(*) OVER() AS TOTAL_COUNT,
+				ROW_NUMBER() OVER (ORDER BY
+				<choose>
+					<when test="orderBy == 'GOODS_READCNT'">GS.GOODS_READCNT DESC</when>
+					<when test="orderBy == 'GOODS_SELL_PRICE' and orderSort == 'ASC'">GS.GOODS_SELL_PRICE ASC</when>
+					<when test="orderBy == 'GOODS_SELL_PRICE' and orderSort == 'DESC'">GS.GOODS_SELL_PRICE DESC</when>
+					<otherwise>GS.GOODS_DATE DESC</otherwise>
+				</choose>
+				) AS NUM,
+				GS.GOODS_NO,
 			       GS.GOODS_CATEGORY,
 			       GS.GOODS_NAME,
 			       GS.GOODS_CONTENT,
@@ -84,18 +95,19 @@ SELECT
 			       GS.GOODS_THUMBNAIL,
 			       GS.GUBUN,
 			       GI.GOODS_IMAGE_STD
-		      FROM GOODS GS, GOODS_IMAGE GI
-		      WHERE GS.GOODS_NO = GI.GOODS_NO
-			  AND GOODS_CATEGORY = #{cate}
-			 <if test="keyword != null">
-		   	 AND (GOODS_NAME LIKE '%' || #{keyword} || '%' OR GOODS_KEYWORD LIKE '%' || #{keyword} || '%')
-		   </if>
-		   AND GUBUN = '0'
-           <if test="orderBy != '' and orderBy != 'null'">
-		     ORDER BY ${orderBy} ${orderSort} 
-		   </if> 	 
-		<include refid="common.pagingPost2"/>
-		   
+			FROM GOODS GS
+			JOIN GOODS_IMAGE GI ON GI.GOODS_NO = GS.GOODS_NO
+			WHERE GS.GOODS_CATEGORY = #{cate}
+			<if test="keyword != null and keyword != ''">
+				AND (
+					GS.GOODS_NAME LIKE CONCAT('%', #{keyword}, '%')
+					OR GS.GOODS_KEYWORD LIKE CONCAT('%', #{keyword}, '%')
+				)
+			</if>
+			AND GS.GUBUN = '0'
+		) AAA
+		WHERE AAA.NUM BETWEEN #{START} AND #{END}
+		ORDER BY AAA.NUM
 	</select>
 	
 	

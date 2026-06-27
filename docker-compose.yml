@@ -2,9 +2,6 @@ services:
   app:
     image: hifrodo/jmmarket-app:v1
     restart: unless-stopped
-    build:
-      context: .
-      dockerfile: Dockerfile.app
     container_name: jmmarket-app
     depends_on:
       db-svc:
@@ -17,9 +14,6 @@ services:
   db-svc:
     image: hifrodo/jmmarket-db:v1
     restart: unless-stopped
-    build:
-      context: .
-      dockerfile: Dockerfile.db
     container_name: db-svc
     environment:
       MYSQL_DATABASE: jm_market

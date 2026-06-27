@@ -7,19 +7,26 @@
 	<!-- 마이페이지 내의 주문 / 배송 상태LIST -->
 	<select id="my_order_list" parameterType="hashmap" resultType="hashmap">
 		<![CDATA[
-			select l.member_no, DATE_FORMAT(l.order_date, '%Y-%m-%d %H:%i:%s') order_date, l.order_no, l.order_state, g.goods_name,
-		        l.order_total_pay_price, l.order_pay_option, l.order_express,
-      
-		        (select count(SD.order_no) from ORDER_DETAIL SD where SD.order_no = D.order_no ) as hap_cnt
-		
-			from ORDER_LIST l, ORDER_DETAIL d, GOODS g
-				
-			where l.order_no = d.order_no
-				and d.goods_no = g.goods_no
-				and l.member_no = #{member_no}
-				and D.ORDER_DETAIL_NO in (select min(ORDER_DETAIL_NO) as Dno from ORDER_DETAIL group by order_no)
-				
-			order by l.order_date desc
+			SELECT
+				L.MEMBER_NO,
+				DATE_FORMAT(L.ORDER_DATE, '%Y-%m-%d %H:%i:%s') ORDER_DATE,
+				L.ORDER_NO,
+				L.ORDER_STATE,
+				G.GOODS_NAME,
+				L.ORDER_TOTAL_PAY_PRICE,
+				L.ORDER_PAY_OPTION,
+				L.ORDER_EXPRESS,
+				(SELECT COUNT(*) FROM ORDER_DETAIL SD WHERE SD.ORDER_NO = L.ORDER_NO) HAP_CNT
+			FROM ORDER_LIST L
+			JOIN ORDER_DETAIL D ON D.ORDER_NO = L.ORDER_NO
+			JOIN GOODS G ON G.GOODS_NO = D.GOODS_NO
+			WHERE L.MEMBER_NO = #{member_no}
+			AND D.ORDER_DETAIL_NO = (
+				SELECT MIN(OD.ORDER_DETAIL_NO)
+				FROM ORDER_DETAIL OD
+				WHERE OD.ORDER_NO = L.ORDER_NO
+			)
+			ORDER BY L.ORDER_DATE DESC
 		]]>
 	</select>
 	
