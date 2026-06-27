@@ -7,7 +7,7 @@
 	<insert id="usePoint" parameterType="hashmap">
 		<selectKey keyProperty="TOTAL" resultType="int" order="BEFORE">
 			SELECT DISTINCT
-				POINT_TOTAL - ${ORDER_USE_POINT}
+				POINT_TOTAL - #{ORDER_USE_POINT}
 			FROM 
 				POINT
 			WHERE 
@@ -17,7 +17,6 @@
 		<![CDATA[
 			INSERT INTO POINT
 			(
-				POINT_NO,
 			    MEMBER_NO, 
 			    POINT_VAL, 
 			    POINT_USE_DATE,
@@ -25,11 +24,10 @@
 			)
 			VALUES
 			(
-				POINT_NO_SEQ.NEXTVAL,
 				#{MEMBER_NO},
-				${ORDER_USE_POINT},
-				SYSDATE,
-				${TOTAL}
+				#{ORDER_USE_POINT},
+				NOW(),
+				#{TOTAL}
 			)
 		]]>
 	</insert>
@@ -38,7 +36,7 @@
 	<insert id="savePoint" parameterType="hashmap">
 		<selectKey keyProperty="TOTAL" resultType="int" order="BEFORE">
 			SELECT DISTINCT
-				POINT_TOTAL + ${ORDER_SAVE_POINT}
+				POINT_TOTAL + #{ORDER_SAVE_POINT}
 			FROM 
 				POINT
 			WHERE 
@@ -48,7 +46,6 @@
 		<![CDATA[
 			INSERT INTO POINT
 			(
-				POINT_NO,
 			    MEMBER_NO, 
 			    POINT_VAL, 
 			    POINT_SAVE_DATE,
@@ -56,11 +53,10 @@
 			)
 			VALUES
 			(
-				POINT_NO_SEQ.NEXTVAL,
 				#{MEMBER_NO},
-				${ORDER_SAVE_POINT},
-				SYSDATE,
-				${TOTAL}
+				#{ORDER_SAVE_POINT},
+				NOW(),
+				#{TOTAL}
 			)
 		]]>
 	</insert>

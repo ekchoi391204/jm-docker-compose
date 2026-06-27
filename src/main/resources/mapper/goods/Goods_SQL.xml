@@ -204,12 +204,8 @@ SELECT
 	
 
 	<insert id="goodsInsert" parameterType="hashmap" useGeneratedKeys="true" keyProperty="IDX"> <!-- 상품 등록 -->
-		<selectKey keyProperty="IDX" resultType="string" order="BEFORE">
-			SELECT GOODS_NO_SEQ.NEXTVAL FROM DUAL
-		</selectKey>
 		<![CDATA[
 			INSERT INTO GOODS(
-								GOODS_NO,
 								GOODS_CATEGORY,
 								GOODS_NAME,
 								GOODS_CONTENT,
@@ -222,14 +218,13 @@ SELECT
 								GOODS_THUMBNAIL
 							 )
 						VALUES(
-								#{IDX},
 								#{GOODS_CATEGORY},
 								#{GOODS_NAME},
 								#{GOODS_CONTENT},
 								#{GOODS_ORIGIN_PRICE},
 								#{GOODS_SELL_PRICE},
 								#{GOODS_SALE_PRICE},
-								sysdate,
+								NOW(),
 								#{GOODS_KEYWORD},
 								#{GOODS_PICK},
 								#{GOODS_THUMBNAIL}
@@ -246,7 +241,7 @@ SELECT
 			        GOODS_ORIGIN_PRICE = #{GOODS_ORIGIN_PRICE},
 			        GOODS_SELL_PRICE = #{GOODS_SELL_PRICE},
 			        GOODS_SALE_PRICE = #{GOODS_SALE_PRICE},
-			        GOODS_DATE = sysdate,
+			        GOODS_DATE = NOW(),
 			        GOODS_KEYWORD = #{GOODS_KEYWORD},
 			        GOODS_PICK = #{GOODS_PICK}
 			WHERE   GOODS_NO = #{IDX}
@@ -265,7 +260,6 @@ SELECT
 	<insert id="attributeInsert" parameterType="hashmap"> <!-- 상품 옵션 등록 -->
 		<![CDATA[
 			INSERT INTO GOODS_ATTRIBUTE(
-										GOODS_ATT_NO,
 										GOODS_NO,
 										GOODS_ATT_SIZE,
 										GOODS_ATT_COLOR,
@@ -273,7 +267,6 @@ SELECT
 										GOODS_ATT_DISPLAY
 										)
 								values(
-										GOODS_ATT_NO_SEQ.NEXTVAL,
 										#{IDX},
 										#{GOODS_ATT_SIZE},
 										#{GOODS_ATT_COLOR},
@@ -296,14 +289,12 @@ SELECT
 		<![CDATA[
 			INSERT INTO GOODS_IMAGE
 					(
-						GOODS_IMAGE_NUM,
 						GOODS_NO,
 						GOODS_IMAGE_ORG,
 						GOODS_IMAGE_STD
 					)
 			VALUES
 					(
-						GOODS_IMAGE_SEQ.NEXTVAL,
 						#{IDX},
 						'null',
 						#{UPLOAD_SAVE_NAME}
@@ -315,14 +306,12 @@ SELECT
 		<![CDATA[
 			INSERT INTO REVIEW_IMAGE
 					(
-						REVIEW_IMAGE_NUM,
 						GOODS_NO,
 						REVIEW_IMAGE_ORG,
 						REVIEW_IMAGE_STD
 					)
 			VALUES
 					(
-						REVIEW_IMAGE_SEQ.NEXTVAL,
 						#{IDX},
 						'null',
 						#{UPLOAD_SAVE_NAME}
@@ -350,17 +339,15 @@ SELECT
 		<![CDATA[
 			INSERT INTO GOODS_LIKE
 					(
-						LIKE_NO,
 						GOODS_NO,
 						MEMBER_NO,
 						LIKE_DATE
 					)
 			VALUES
 					(
-						LIKE_NO_SEQ.NEXTVAL,
 						#{IDX},
 						#{MEMBER_NO},
-						sysdate
+						NOW()
 					)
 		]]>
 	</insert>
@@ -476,7 +463,6 @@ SELECT
 	<insert id="insertGoodsQna" parameterType="hashmap"> <!-- 상품 QNA 등록 상품문의는 등록만되고 삭제 수정안됨 관리자만 삭제가능 -->
 		<![CDATA[
 			INSERT INTO GOODS_QNA(
-								GOODS_QNA_NO,
 								GOODS_NO,
 								MEMBER_NO,
 								GOODS_QNA_LEVEL,
@@ -487,13 +473,12 @@ SELECT
 								GOODS_QNA_SECRET
 								)
 						values(
-								GOODS_QNA_NO_SEQ.NEXTVAL,
 								#{IDX},
 								#{MEMBER_NO},
 								0,
 								#{GOODS_QNA_TITLE},
 								#{GOODS_QNA_CONTENT},
-								sysdate,
+								NOW(),
 								#{MEMBER_NAME},
 								#{GOODS_QNA_SECRET}
 							   )
@@ -543,7 +528,6 @@ SELECT
 	<insert id="insertGoodsReview" parameterType="hashmap"> <!-- 상품 Review 등록 -->
 		<![CDATA[
 			INSERT INTO REVIEW(
-								REVIEW_NO,
 								MEMBER_NO,
 								REVIEW_TITLE,
 								REVIEW_CONTENT,
@@ -553,11 +537,10 @@ SELECT
 								MEMBER_NAME
 								)
 						values(
-								REVIEW_NO_SEQ.NEXTVAL,
 								#{MEMBER_NO},
 								#{REVIEW_TITLE},
 								#{REVIEW_CONTENT},
-								sysdate,
+								NOW(),
 								#{IDX},
 								#{REVIEW_IMG},
 								#{MEMBER_NAME}

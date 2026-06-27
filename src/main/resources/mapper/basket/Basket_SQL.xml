@@ -28,9 +28,9 @@
 		<![CDATA[
 			UPDATE BASKET 
 			SET
-				BASKET_GOODS_AMOUNT = ${BASKET_GOODS_AMOUNT}
+				BASKET_GOODS_AMOUNT = #{BASKET_GOODS_AMOUNT}
 			WHERE
-				BASKET_NO = ${BASKET_NO}
+				BASKET_NO = #{BASKET_NO}
 		]]>
 	</update>
 	
@@ -38,7 +38,7 @@
 	<delete id="basketDelete" parameterType="hashmap">
 		<![CDATA[
 			DELETE FROM BASKET
-			WHERE BASKET_NO = ${BASKET_NO}
+			WHERE BASKET_NO = #{BASKET_NO}
 		]]>
 	</delete>
 	
@@ -46,7 +46,7 @@
 	<delete id="basketAllDelete" parameterType="hashmap">
 		<![CDATA[
 			DELETE FROM BASKET
-			WHERE MEMBER_NO = ${MEMBER_NO}
+			WHERE MEMBER_NO = #{MEMBER_NO}
 		]]>
 	</delete>
 	
@@ -58,7 +58,7 @@
 				GOODS_LIKE 
 			WHERE 
 				MEMBER_NO= #{MEMBER_NO}
-		    AND GOODS_NO=${GOODS_NO}
+		    AND GOODS_NO=#{GOODS_NO}
 		]]>
 	</select>
 	
@@ -67,17 +67,15 @@
 		<![CDATA[
 			INSERT INTO GOODS_LIKE
 			(
-				LIKE_NO,
 			    GOODS_NO, 
 			    MEMBER_NO, 
 			    LIKE_DATE
 			)
 			VALUES
 			(
-				LIKE_NO_SEQ.NEXTVAL,
-				${GOODS_NO},
+				#{GOODS_NO},
 				#{MEMBER_NO},
-				SYSDATE
+				NOW()
 			)
 		]]>
 	</insert>
@@ -98,6 +96,7 @@
 			AND A.BASKET_NO IN (${SELECT_BASKET_NO})
 		    AND A.GOODS_NO=D.GOODS_NO
         	AND A.GOODS_ATT_NO=E.GOODS_ATT_NO
+			AND A.MEMBER_NO=M.MEMBER_NO
 
 		]]>
 	</select>

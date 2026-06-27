@@ -13,9 +13,9 @@
 			UPDATE COUPON_STATUS 
 			SET
 				COUPON_USE_STATE = 1,
-				COUPON_USE_DATE = SYSDATE
+				COUPON_USE_DATE = NOW()
 			WHERE
-				COUPON_STATUS_NO = ${COUPON_STATUS_NO_1}
+				COUPON_STATUS_NO = #{COUPON_STATUS_NO_1}
 			AND MEMBER_NO = 1
 		]]>
 	</update>
@@ -29,11 +29,11 @@
 		FROM
 		    (SELECT
 		        COUPON_NO, COUPON_ID, CONCAT(COUPON_VALUE,'%') COUPON_VALUE,
-		        TO_CHAR(COUPON_S_VALIDITY, 'YYYY-MM-DD') COUPON_S_VALIDITY,
-		        TO_CHAR(COUPON_E_VALIDITY, 'YYYY-MM-DD') COUPON_E_VALIDITY,
+		        DATE_FORMAT(COUPON_S_VALIDITY, '%Y-%m-%d') COUPON_S_VALIDITY,
+		        DATE_FORMAT(COUPON_E_VALIDITY, '%Y-%m-%d') COUPON_E_VALIDITY,
 		        CASE
-		            WHEN TO_CHAR(COUPON_E_VALIDITY, 'YYYY-MM-DD') < TO_CHAR(sysdate, 'YYYY-MM-DD') THEN '종료'
-		            WHEN TO_CHAR(COUPON_S_VALIDITY, 'YYYY-MM-DD') > TO_CHAR(sysdate, 'YYYY-MM-DD') THEN '예정'
+		            WHEN COUPON_E_VALIDITY < CURRENT_DATE THEN '종료'
+		            WHEN COUPON_S_VALIDITY > CURRENT_DATE THEN '예정'
 		        ELSE '진행중'
 		        END AS COUPON_STATE
 			FROM COUPON)
@@ -63,10 +63,10 @@
 		
 		<choose>
 			<when test="searchOption == 'COUPON_NO'">
-				AND COUPON_NO LIKE '%${keyword}%'
+				AND CAST(COUPON_NO AS CHAR) LIKE CONCAT('%', #{keyword}, '%')
 			</when>
 			<when test="searchOption == 'COUPON_ID'">
-				AND COUPON_ID LIKE '%${keyword}%'
+				AND COUPON_ID LIKE CONCAT('%', #{keyword}, '%')
 			</when>
 			<otherwise>
 			</otherwise>
@@ -85,7 +85,7 @@
 	
 	<!-- Next COUPON_NO SELECT -->
 	<select id="couponNextVal" resultType="String">
-		SELECT NVL(MAX(COUPON_NO),1)+1 COUPON_NO
+		SELECT COALESCE(MAX(COUPON_NO), 0)+1 COUPON_NO
 		FROM COUPON
 	</select>
 
@@ -94,16 +94,16 @@
 			(COUPON_NO, COUPON_ID, COUPON_VALUE, COUPON_S_VALIDITY, COUPON_E_VALIDITY)
 		VALUES
 			(#{COUPON_NO}, #{COUPON_ID}, #{COUPON_VALUE},
-			TO_DATE(#{COUPON_S_VALIDITY},'YYYY-MM-DD'),
-			TO_DATE(#{COUPON_E_VALIDITY},'YYYY-MM-DD'))
+			STR_TO_DATE(#{COUPON_S_VALIDITY}, '%Y-%m-%d'),
+			STR_TO_DATE(#{COUPON_E_VALIDITY}, '%Y-%m-%d'))
 	</insert>
 
 	<update id="couponUpdate">
 		UPDATE COUPON SET
 			COUPON_ID = #{COUPON_ID},
 			COUPON_VALUE = #{COUPON_VALUE},
-			COUPON_S_VALIDITY = TO_DATE(#{COUPON_S_VALIDITY},'YYYY-MM-DD'),
-			COUPON_E_VALIDITY = TO_DATE(#{COUPON_E_VALIDITY},'YYYY-MM-DD')
+			COUPON_S_VALIDITY = STR_TO_DATE(#{COUPON_S_VALIDITY}, '%Y-%m-%d'),
+			COUPON_E_VALIDITY = STR_TO_DATE(#{COUPON_E_VALIDITY}, '%Y-%m-%d')
 		WHERE COUPON_NO = #{COUPON_NO}
 	</update>
 
@@ -116,9 +116,9 @@
 
 	<insert id="common_insertCoupon" parameterType="hashmap">
 		INSERT INTO COUPON_STATUS
-			(COUPON_STATUS_NO, COUPON_NO, MEMBER_NO, COUPON_ISSUE_DATE)
+			(COUPON_NO, MEMBER_NO, COUPON_ISSUE_DATE)
 		VALUES
-			(COUPON_STATUS_NO_SEQ.NEXTVAL, #{COUPON_NO}, #{session_no}, sysdate)
+			(#{COUPON_NO}, #{session_no}, NOW())
 	</insert>
 	
 	<!-- 쿠폰상태 검색 -->
@@ -126,8 +126,8 @@
 		<![CDATA[
 		SELECT
 			CASE
-			WHEN TO_CHAR(COUPON_E_VALIDITY, 'YYYY-MM-DD') < TO_CHAR(sysdate, 'YYYY-MM-DD') THEN 'end'
-			WHEN TO_CHAR(COUPON_S_VALIDITY, 'YYYY-MM-DD') > TO_CHAR(sysdate, 'YYYY-MM-DD') THEN 'pre'
+			WHEN COUPON_E_VALIDITY < CURRENT_DATE THEN 'end'
+			WHEN COUPON_S_VALIDITY > CURRENT_DATE THEN 'pre'
 			ELSE 'ing'
 			END AS COUPON_STATE
 		FROM COUPON

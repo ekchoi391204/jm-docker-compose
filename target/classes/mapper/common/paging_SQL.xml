@@ -22,7 +22,7 @@
 			FROM	( 
 						SELECT 	COUNT(*) OVER() AS TOTAL_COUNT, 
 								AA.*,
-								ROWNUM AS NUM
+								ROW_NUMBER() OVER () AS NUM
 						FROM	( 
 	</sql> 
 	

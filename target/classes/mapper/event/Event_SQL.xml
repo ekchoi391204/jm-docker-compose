@@ -7,7 +7,7 @@
 		<![CDATA[
 		SELECT
 		    ROW_NUMBER() OVER (ORDER BY EVENT_DATE DESC, EVENT_STATE DESC, EVENT_NO ASC) RNUM,
-		    EVENT_NO, EVENT_TITLE, EVENT_CONTENT, TO_CHAR(EVENT_DATE, 'YYYY-MM-DD') EVENT_DATE, EVENT_THUMBNAIL, EVENT_STATE
+		    EVENT_NO, EVENT_TITLE, EVENT_CONTENT, DATE_FORMAT(EVENT_DATE, '%Y-%m-%d') EVENT_DATE, EVENT_THUMBNAIL, EVENT_STATE
 		FROM
 			(SELECT
 			EVENT_NO, EVENT_TITLE, EVENT_CONTENT, EVENT_DATE, EVENT_THUMBNAIL,
@@ -40,10 +40,10 @@
 		
 		<choose>
 			<when test="searchOption == 'EVENT_NO'">
-				AND EVENT_NO LIKE '%${keyword}%'
+				AND CAST(EVENT_NO AS CHAR) LIKE CONCAT('%', #{keyword}, '%')
 			</when>
 			<when test="searchOption == 'EVENT_TITLE'">
-				AND EVENT_TITLE LIKE '%${keyword}%'
+				AND EVENT_TITLE LIKE CONCAT('%', #{keyword}, '%')
 			</when>
 			<otherwise>
 			</otherwise>
@@ -62,10 +62,9 @@
 
 	<!-- Next EVENT_NO SELECT -->
 	<select id="eventNOnDay" parameterType="hashmap" resultType="hashmap">
-		SELECT EVENT_NO, TODAY
-		FROM
-			(SELECT NVL(MAX(EVENT_NO),1)+1 EVENT_NO FROM EVENT) a,
-			(SELECT TO_CHAR(sysdate,'YYYY-MM-DD') TODAY FROM DUAL) b
+		SELECT COALESCE(MAX(EVENT_NO), 0)+1 EVENT_NO,
+			DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') TODAY
+		FROM EVENT
 	</select>
 	
 	<insert id="eventInsert" parameterType="hashmap">
@@ -80,7 +79,7 @@
 			EVENT_GUBUN = #{EVENT_GUBUN},
 			EVENT_TITLE = #{EVENT_TITLE},
 			EVENT_CONTENT = #{EVENT_CONTENT},
-			EVENT_DATE = TO_DATE(#{EVENT_DATE}, 'YYYY-MM-DD'),
+			EVENT_DATE = STR_TO_DATE(#{EVENT_DATE}, '%Y-%m-%d'),
 			EVENT_THUMBNAIL = #{EVENT_THUMBNAIL}
 		WHERE EVENT_NO = #{EVENT_NO}
 	</update>
@@ -91,15 +90,15 @@
 		<include refid="event.eventView"/>
 		<![CDATA[
 			WHERE EVENT_STATE = '공개'
-            AND EVENT_DATE <= TO_CHAR(sysdate, 'YYYY-MM-DD')
+            AND EVENT_DATE <= CURRENT_DATE
 		]]>
 
 		<choose>
 			<when test="searchOption == 'EVENT_TITLE'">
-				AND EVENT_TITLE LIKE '%${keyword}%'
+				AND EVENT_TITLE LIKE CONCAT('%', #{keyword}, '%')
 			</when>
 			<when test="searchOption == 'EVENT_CONTENT'">
-				AND EVENT_CONTENT LIKE '%${keyword}%'
+				AND EVENT_CONTENT LIKE CONCAT('%', #{keyword}, '%')
 			</when>
 			<otherwise>
 			</otherwise>
@@ -110,7 +109,7 @@
 	
 	<select id="common_eventDetail" parameterType="hashmap" resultType="hashmap">
 		SELECT
-			EVENT_NO, EVENT_GUBUN, EVENT_TITLE, EVENT_CONTENT, TO_CHAR(EVENT_DATE, 'YYYY-MM-DD') EVENT_DATE, EVENT_THUMBNAIL
+			EVENT_NO, EVENT_GUBUN, EVENT_TITLE, EVENT_CONTENT, DATE_FORMAT(EVENT_DATE, '%Y-%m-%d') EVENT_DATE, EVENT_THUMBNAIL
 		FROM EVENT
 		WHERE
 			EVENT_NO=#{EVENT_NO}
@@ -130,7 +129,7 @@
 				FROM
 				(SELECT EVENT_NO, EVENT_CONTENT, INSTR(EVENT_CONTENT,'<a href="/couponSave.do?COUPON_NO=')+38 STAY FROM EVENT WHERE EVENT_GUBUN = 1)) E
 			WHERE C.COUPON_NO = E.CP_NO
-			AND TO_CHAR(COUPON_E_VALIDITY, 'YYYY-MM-DD') < TO_CHAR(sysdate, 'YYYY-MM-DD'))
+			AND COUPON_E_VALIDITY < CURRENT_DATE)
 		]]>
 	</update>
 	

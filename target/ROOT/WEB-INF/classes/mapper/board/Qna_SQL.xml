@@ -11,7 +11,7 @@
 			    QNA_NO,
 			    QNA_TITLE,
 			    QNA_NAME,
-			    TO_CHAR(QNA_DATE, 'YYYY.MM.DD') AS QNA_DATE,
+			    DATE_FORMAT(QNA_DATE, '%Y.%m.%d') AS QNA_DATE,
 			    QNA_LEVEL,
 			    QNA_PASSWD
 			FROM
@@ -23,12 +23,8 @@
 	<!-- 사용자 QNA질문하기 -->
 	<!-- 제목 문의유형 글쓴이 이메일 내용-->
 	<insert id="insertQna" parameterType="hashmap" useGeneratedKeys="true" keyProperty="QNA_NO">
-		<selectKey keyProperty="QNA_NO" resultType="string" order="BEFORE">
-			SELECT QNA_NO_SEQ.NEXTVAL FROM DUAL
-		</selectKey>
 			INSERT INTO QNA
-			( QNA_NO, 
-			MEMBER_NO,
+			( MEMBER_NO,
 			QNA_NAME,
 			QNA_LEVEL,  
 			QNA_CATEGORY,
@@ -38,14 +34,13 @@
 			QNA_SECRET, 
 			QNA_PASSWD )
 		VALUES
-			( #{QNA_NO} ,
-			#{MEMBER_NO} , 
+			( #{MEMBER_NO} , 
 			#{QNA_NAME} ,
 			0 ,
 			#{QNA_CATEGORY} ,
 			#{QNA_TITLE} ,
 			#{QNA_CONTENT} ,
-			SYSDATE ,
+			NOW() ,
 			#{QNA_SECRET} ,
 			#{QNA_PASSWD} )
 	</insert>
@@ -56,7 +51,7 @@
 			SELECT 
 				QNA_NO, 
 				QNA_CATEGORY, 
-				TO_CHAR(QNA_DATE, 'YYYY.MM.DD') AS QNA_DATE, 
+				DATE_FORMAT(QNA_DATE, '%Y.%m.%d') AS QNA_DATE, 
 				QNA_TITLE,  
 				QNA_CONTENT,
 				QNA_NAME,

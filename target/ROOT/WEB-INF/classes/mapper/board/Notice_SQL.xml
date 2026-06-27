@@ -10,7 +10,7 @@
 				ROW_NUMBER() OVER (ORDER BY NOTICE_NO DESC) RNUM,
 			    NOTICE_NO,
 			    NOTICE_TITLE,
-			    TO_CHAR(NOTICE_DATE, 'YYYY.MM.DD') AS NOTICE_DATE
+			    DATE_FORMAT(NOTICE_DATE, '%Y.%m.%d') AS NOTICE_DATE
 			FROM
 			    NOTICE
 			WHERE
@@ -20,13 +20,9 @@
 	</select>
 	
 	<insert id="insertNotice" parameterType="hashmap" useGeneratedKeys="true" keyProperty="NOTICE_NO">
-		<selectKey keyProperty="NOTICE_NO" resultType="string" order="BEFORE">
-			SELECT NOTICE_NO_SEQ.NEXTVAL FROM DUAL
-		</selectKey>
 		<![CDATA[
 			INSERT INTO NOTICE
 			(
-				NOTICE_NO,
 			    NOTICE_TITLE, 
 			    NOTICE_CONTENT, 
 			    NOTICE_GUBUN,
@@ -35,11 +31,10 @@
 			)
 			VALUES
 			(
-				#{NOTICE_NO}, 
 				#{NOTICE_TITLE},
 				#{NOTICE_CONTENT},
 			    0, 
-			    SYSDATE, 
+			    NOW(), 
 			    #{MEMBER_NO}
 			)
 		]]>
@@ -72,8 +67,7 @@
 	
 	<update id="deleteNotice" parameterType="hashmap">
 		<![CDATA[
-			DELETE 
-				NOTICE
+			DELETE FROM NOTICE
 			WHERE
 				NOTICE_NO = #{NOTICE_NO}
 		]]>

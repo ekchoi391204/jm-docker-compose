@@ -12,7 +12,7 @@
 				NOTICE_NO, 
 				NOTICE_TITLE, 
 				NOTICE_CONTENT,
-				TO_CHAR(NOTICE_DATE, 'YYYY.MM.DD') AS NOTICE_DATE		
+				DATE_FORMAT(NOTICE_DATE, '%Y.%m.%d') AS NOTICE_DATE		
 			FROM 
 				NOTICE
 			WHERE 
@@ -23,13 +23,9 @@
 	
 	<!-- FAQ 리스트 등록하기 -->
 	<insert id="insertFaq" parameterType="hashmap" useGeneratedKeys="true" keyProperty="NOTICE_NO">
-		<selectKey keyProperty="NOTICE_NO" resultType="string" order="BEFORE">
-			SELECT NOTICE_NO_SEQ.NEXTVAL FROM DUAL
-		</selectKey>
 		<![CDATA[
 			INSERT INTO NOTICE
 			(
-				NOTICE_NO ,
 				NOTICE_GUBUN ,
 			    NOTICE_TITLE , 
 			    NOTICE_CONTENT , 
@@ -38,11 +34,10 @@
 			)
 			VALUES
 			(
-				#{NOTICE_NO} ,
 				1 , 
 				#{NOTICE_TITLE} ,
 				#{NOTICE_CONTENT} ,
-			    SYSDATE ,
+			    NOW() ,
 			    #{MEMBER_NO}     
 			)
 		]]>
@@ -55,11 +50,11 @@
 			SELECT 
 				NOTICE_NO,
 				NOTICE_TITLE,
-				NOTICE_CONTENT,
+				NOTICE_CONTENT
 			FROM 
 				NOTICE
 			WHERE
-				NOTICE_NO = #{NOTICE_NO},
+				NOTICE_NO = #{NOTICE_NO}
 		]]>
 	 	</select> 
 	
@@ -69,7 +64,7 @@
 			UPDATE NOTICE
 			SET
 				NOTICE_TITLE = #{NOTICE_TITLE}, 
-				NOTICE_CONTENTS = #{NOTICE_CONTENTS}
+				NOTICE_CONTENT = #{NOTICE_CONTENT}
 			WHERE
 				NOTICE_NO = #{NOTICE_NO}
 		]]>
