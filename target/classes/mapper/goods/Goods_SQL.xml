@@ -370,12 +370,11 @@ SELECT
 				GOODS_ATTRIBUTE	
 			WHERE
 				GOODS_NO = #{IDX}
-			AND GOODS_ATT_COLOR like '%' || #{ORDER_COLOR} || '%' 
-            AND GOODS_ATT_SIZE like  '%' || #{ORDER_SIZE} || '%'       
+			AND GOODS_ATT_COLOR LIKE CONCAT('%', #{ORDER_COLOR}, '%')
+            AND GOODS_ATT_SIZE LIKE CONCAT('%', #{ORDER_SIZE}, '%')
     </selectKey>
 		<![CDATA[
 			INSERT INTO BASKET(
-								BASKET_NO,
 								MEMBER_NO,
 								GOODS_NO,
 								GOODS_ATT_NO,
@@ -386,12 +385,11 @@ SELECT
 								GUBUN
 							 )
 						VALUES(
-								BASKET_NO_SEQ.NEXTVAL,
 								#{MEMBER_NO},
 								#{IDX},
 								#{GOODS_ATT_NO},
 								#{BASKET_GOODS_AMOUNT},
-								sysdate,
+								NOW(),
 								#{ORDER_COLOR},
 								#{ORDER_SIZE},
 								#{GUBUN}
@@ -402,7 +400,7 @@ SELECT
 	<select id="selectBasketNo" parameterType="hashmap" resultType="hashmap"> <!-- 상품상세보기 장바구니 PK값 가져오기 -->
 		<![CDATA[
 			SELECT 
-        			LISTAGG(BASKET_NO,',') WITHIN GROUP(ORDER BY BASKET_NO) AS BASKET_NO
+					GROUP_CONCAT(BASKET_NO ORDER BY BASKET_NO SEPARATOR ',') AS BASKET_NO
 			FROM 
 					BASKET
 			WHERE 

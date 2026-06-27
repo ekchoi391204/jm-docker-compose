@@ -31,20 +31,16 @@
 				M.MEMBER_NO = #{MEMBER_NO}
 			AND M.COUPON_USE_STATE = 0
             AND M.COUPON_NO = C.COUPON_NO
-            AND C.COUPON_S_VALIDITY <= SYSDATE
-            AND C.COUPON_E_VALIDITY >= SYSDATE
+            AND C.COUPON_S_VALIDITY <= NOW()
+            AND C.COUPON_E_VALIDITY >= NOW()
 		]]>
 	</select>
 	
 	<!-- 주문추가 -->
-	<insert id="insertOrder" parameterType="hashmap">
-		<selectKey keyProperty="ORDER_NO" resultType="int" order="BEFORE">
-			SELECT ORDER_NO_SEQ.NEXTVAL FROM DUAL
-		</selectKey>
+	<insert id="insertOrder" parameterType="hashmap" useGeneratedKeys="true" keyProperty="ORDER_NO">
 		<![CDATA[
 			INSERT INTO ORDER_LIST
 			(
-				ORDER_NO,
 			    MEMBER_NO, 
 			    ORDER_NAME, 
 			    ORDER_ZIPCODE,
@@ -65,7 +61,6 @@
 			)
 			VALUES
 			(
-				#{ORDER_NO},
 				#{MEMBER_NO},
 				#{ORDER_NAME},
 				#{ORDER_ZIPCODE},
@@ -75,7 +70,7 @@
 				#{ORDER_PAY_NAME},
 				#{ORDER_PAY_OPTION},
 				#{ORDER_PAY_BANK},
-				SYSDATE,
+				NOW(),
 				#{ORDER_TOTAL_ORDER_PRICE},
 				#{ORDER_TOTAL_PAY_PRICE},
 				0,
@@ -102,7 +97,6 @@
 		<![CDATA[
 			INSERT INTO ORDER_DETAIL
 			(
-				ORDER_DETAIL_NO,
 			    ORDER_NO, 
 			    GOODS_NO, 
 			    GOODS_ATT_NO,
@@ -116,8 +110,7 @@
 			    ORDER_DETAIL_STATE
 			)
 			VALUES	
-				(ORDER_DETAIL_NO_SEQ.NEXTVAL,
-				#{ORDER_NO},
+				(#{ORDER_NO},
 				#{GOODS_NO},
 				#{GOODS_ATT_NO},
 				#{ORDER_DETAIL_PRICE},

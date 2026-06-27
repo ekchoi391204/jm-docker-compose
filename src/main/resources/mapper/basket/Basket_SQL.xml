@@ -17,8 +17,9 @@
 			WHERE 
 				A.MEMBER_NO= #{MEMBER_NO}
 				AND A.GUBUN = '0'
-		    		AND A.GOODS_NO=D.GOODS_NO
-        				AND A.GOODS_ATT_NO=E.GOODS_ATT_NO
+			    AND A.GOODS_NO=D.GOODS_NO
+        	AND A.GOODS_ATT_NO=E.GOODS_ATT_NO
+			AND A.MEMBER_NO=M.MEMBER_NO
 		]]>
 	</select>
 	
