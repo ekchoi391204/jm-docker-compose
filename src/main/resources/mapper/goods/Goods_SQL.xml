@@ -154,8 +154,8 @@ SELECT
 	<select id="selectGoodsAtt" parameterType="hashmap" resultType="hashmap"> <!-- 상품상세보기 컬러랑 사이즈 배열로 가져오기 -->
 		<![CDATA[
 			SELECT 
-				LISTAGG(GOODS_ATT_COLOR,',') WITHIN GROUP(ORDER BY GOODS_ATT_COLOR) AS GOODS_ATT_COLOR,
-                LISTAGG(GOODS_ATT_SIZE,',') WITHIN GROUP(ORDER BY GOODS_ATT_SIZE) AS GOODS_ATT_SIZE
+				GROUP_CONCAT(GOODS_ATT_COLOR ORDER BY GOODS_ATT_COLOR SEPARATOR ',') AS GOODS_ATT_COLOR,
+                GROUP_CONCAT(GOODS_ATT_SIZE ORDER BY GOODS_ATT_SIZE SEPARATOR ',') AS GOODS_ATT_SIZE
 			FROM 
 				GOODS_ATTRIBUTE
 			WHERE 
@@ -172,8 +172,8 @@ SELECT
 				GOODS_ATTRIBUTE	
 			WHERE
 				GOODS_NO = #{IDX}
-			AND GOODS_ATT_COLOR like '%' || #{SELECT_COLOR} || '%' 
-            AND GOODS_ATT_SIZE like  '%' || #{SELECT_SIZE} || '%'
+			AND GOODS_ATT_COLOR LIKE CONCAT('%', #{SELECT_COLOR}, '%')
+            AND GOODS_ATT_SIZE LIKE CONCAT('%', #{SELECT_SIZE}, '%')
 		]]>
 	</select>
 	
@@ -184,7 +184,7 @@ SELECT
 		<![CDATA[
 			UPDATE GOODS
 			SET
-				GOODS_READCNT = NVL(GOODS_READCNT, 0) + 1
+				GOODS_READCNT = IFNULL(GOODS_READCNT, 0) + 1
 			WHERE
 				GOODS_NO = #{IDX}
 		]]>
@@ -505,13 +505,11 @@ SELECT
 	<select id="selectReviewList" parameterType="hashmap" resultType="hashmap"> <!-- 상품 Review 리스트 -->
 		<![CDATA[
 		
-		SELECT 	AAA.* 
-			FROM( 
-				SELECT 	COUNT(*) OVER() AS TOTAL_COUNT1, 
-					AA.*,
-					ROWNUM AS NUM
-				FROM(
-					SELECT
+		SELECT AAA.*
+			FROM (
+				SELECT
+					COUNT(*) OVER() AS TOTAL_COUNT1,
+					ROW_NUMBER() OVER (ORDER BY REVIEW_NO DESC) AS NUM,
 					REVIEW_NO,
 					MEMBER_NO,
 					ORDER_NO,
@@ -524,13 +522,11 @@ SELECT
 					REVIEW_READCNT,
 					REVIEW_IMG,
 					MEMBER_NAME
-					FROM
-						REVIEW
+					FROM REVIEW
 				WHERE GOODS_NO = #{IDX}
-				ORDER BY REVIEW_NO DESC
-					  ) AA 
-					) AAA 
-				WHERE 	AAA.NUM BETWEEN #{START} AND #{END}
+				) AAA
+			WHERE AAA.NUM BETWEEN #{START} AND #{END}
+			ORDER BY AAA.NUM
 		]]>
 	</select>
 	
