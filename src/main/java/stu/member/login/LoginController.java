@@ -60,7 +60,11 @@ public class LoginController {
 					session.setAttribute("SESSION_NO", chk.get("MEMBER_NO"));
 					session.setAttribute("SESSION_NAME", chk.get("MEMBER_NAME"));
 
-					mv = new ModelAndView("redirect:/main.do");
+					if ("sksrkl3600".equals(chk.get("MEMBER_ID"))) {
+						mv = new ModelAndView("redirect:/order_admin_a.do");
+					} else {
+						mv = new ModelAndView("redirect:/main.do");
+					}
 					mv.addObject("MEMBER", chk);
 
 					session.getMaxInactiveInterval();

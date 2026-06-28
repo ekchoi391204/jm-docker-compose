@@ -102,6 +102,27 @@ li {
             e.preventDefault();
             fn_openQnaWrite();
          });
+
+         $(document).on("click", ".myButton", function(e) {
+            e.preventDefault();
+            var rnumClass = $.grep($(this).attr("class").split(/\s+/), function(className) {
+               return className.indexOf("rnum") == 0;
+            })[0];
+            var rnum = rnumClass.replace("rnum", "");
+            var qnaPass = $("#qnaPasswd" + rnum).val();
+            var qnaNo = $("tr.list" + rnum + " input.qnaNo").val();
+            var data = {QNA_PASSWD : qnaPass, QNA_NO : qnaNo};
+            $.ajax({url : "./chkPassword.do",
+               type : "POST", data : data,
+               success : function(res) {
+                  if (res == 1) {
+                     fn_openQnaDetail(qnaNo, rnum);
+                  } else {
+                     alert("PASSWORD ERROR!");
+                  }
+               }
+            });
+         });
    
          $(".myButton").on("click", function(e) { //제목 
             var qnaPassId = $(this).parent().children()[0].id;
@@ -157,6 +178,7 @@ li {
       function fn_selectQnaListCallback(data) {
          var total = data.TOTAL;
          var body = $("table>tbody");
+         var str = "";
          body.empty();
          if (total == 0) {
             var str = "<tr>" + "<td colspan='4'>조회된 결과가 없습니다.</td>"

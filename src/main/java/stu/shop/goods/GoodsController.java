@@ -198,6 +198,10 @@ public class GoodsController {
 		ModelAndView mv = new ModelAndView("shop/goodsDetail");
 
 		Map<String, Object> map = goodsService.selectGoodsDetail(commandMap.getMap(), request);
+		Map<String, Object> attMap = goodsService.selectGoodsAtt(commandMap.getMap());
+		if (attMap != null) {
+			map.putAll(attMap);
+		}
 		System.out.println("IDX = " + commandMap.getMap());
 		Map<String, Object> IDX = commandMap.getMap();
 		System.out.println("map = " + map);
@@ -471,7 +475,6 @@ public class GoodsController {
 		System.out.println("수정폼1=" + commandMap.getMap());
 		System.out.println("수정폼2=" + map);
 		mv.addObject("map", map);
-		mv.addObject("list", map.get("list"));
 		mv.addObject("type", "modify");
 		mv.addObject("title", "수정하기");
 		System.out.println("수정폼3=" + map);

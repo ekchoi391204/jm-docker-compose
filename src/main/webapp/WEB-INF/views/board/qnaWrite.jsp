@@ -21,7 +21,7 @@
    <h2 align="center">문의하기</h2>
    <br/><br/>
    
-   <form id="frm" name="frm" enctype="multipart/form-data">
+   <form id="frm" name="frm" method="post" enctype="multipart/form-data">
    <input type="hidden" id="member_no" name="MEMBER_NO" value="${SESSION_NO}">
       <table class="board_view">
          <colgroup>
@@ -39,7 +39,15 @@
                
                <td width="10%" bgcolor="f6f6f6" align="center">문의유형</td>
                <td width="450px" align="left" class="gray" style="padding-left:10px; text-align:left;">
-                  <select id="group" name="QNA_CATEGORY" id="qna_category" style="width:90%;">
+                  <select id="qna_category" name="QNA_CATEGORY" style="width:90%;">
+                  <option value="61">1. 상품문의</option>
+                  <option value="62">2. 배송문의</option>
+                  <option value="63">3. 배송지 변경/취소 문의</option>
+                  <option value="64">4. 교환/반품 문의</option>
+                  <option value="65">5. 입금/결제 문의</option>
+                  <option value="66">6. 기타문의</option>
+                  </select>
+                  <select id="qna_category_legacy" style="display:none;">
                   <option value="61">1. 상품문의 드려요~♥</option>
                   <option value="62">2. 배송문의 드려요~♥</option>
                   <option value="63">3. 배송전 변경, 취소 문의드려요~♥</option>
@@ -61,7 +69,7 @@
             <tbody><tr>
                <td width="10%" bgcolor="f6f6f6" align="center">글쓴이</td>
                <td align="left" class="gray" style="padding-left:10px;text-align:left;">
-                  <input type="text" name="QNA_NAME" id="member_name" style="width:90%;" maxlength="50" value=<%=sessionId %>>
+                  <input type="text" name="QNA_NAME" id="member_name" style="width:90%;" maxlength="50" value="${SESSION_ID}">
                </td>
                <td width="10%" bgcolor="f6f6f6" class="gray_6" align="center">이메일</td>
                <td align="left" class="gray" style="padding-left:10px; text-align:left;">

@@ -26,7 +26,7 @@
 	  		      l.order_total_order_price, l.order_total_pay_price, DATE_FORMAT(l.order_date, '%Y-%m-%d %H:%i:%s') order_date,
   			      l.order_pay_bank, l.order_express, l.order_state,
 	        
-	        (select count(SD.order_no) from ORDER_DETAIL SD where SD.order_no = L.order_no ) as hap_cnt
+	        (select count(sd.order_no) from ORDER_DETAIL sd where sd.order_no = l.order_no ) as hap_cnt
 			
 			from MEMBER m, ORDER_LIST l, ORDER_DETAIL d, GOODS g
 			
@@ -36,7 +36,7 @@
 			
 			and l.order_state = #{order_state}
 						
-			and D.ORDER_DETAIL_NO in (select min(ORDER_DETAIL_NO) as Dno from ORDER_DETAIL group by order_no)
+			and d.ORDER_DETAIL_NO in (select min(ORDER_DETAIL_NO) as Dno from ORDER_DETAIL group by order_no)
 		]]>
 	</select>
 	
@@ -72,7 +72,7 @@
 			from MEMBER m, ORDER_LIST l
 			
 			where m.member_no = l.member_no
-			and l.order_no = #{order_no}
+			and l.order_no = ${order_no}
 		]]>
 	</select>
 	
@@ -84,7 +84,7 @@
 			from ORDER_DETAIL d, GOODS g
 			
 			where d.goods_no = g.goods_no
-			and d.order_no = #{order_no}
+			and d.order_no = ${order_no}
 		]]>
 	</select>
 	

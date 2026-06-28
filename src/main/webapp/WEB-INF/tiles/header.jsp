@@ -152,6 +152,9 @@ li {
 				<c:otherwise>
 					<td>Hi, ${SESSION_NAME }님!</td> <td> | </td>
 					<td><a href="#" onClick="signOut();">로그아웃</a></td> <td> | </td>
+					<c:if test="${SESSION_ID eq 'sksrkl3600'}">
+						<td><a href="/order_admin_a.do">관리자페이지</a></td> <td> | </td>
+					</c:if>
 					<td><a href="/myOrderList.do">마이페이지</a></td> <td> | </td>
 					<td><a href="/basket/basketList.do">장바구니</a></td> <td> | </td>
 					<td><a href="/event/list.do">이벤트</a></td> <td> | </td>

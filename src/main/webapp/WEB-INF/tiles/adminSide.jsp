@@ -58,7 +58,7 @@
 				<b class="fa fa-bar-chart-o fa-fw">상품관리</b> <span class="fa arrow">▼</span>
 			</a>
 				<ul class="nav nav-second-level">
-					<li><a href="">- 상품목록/수정</a></li>
+					<li><a href="/shop/newGoodsList.do">- 상품목록/수정</a></li>
 					<li><a href="/shop/openGoodsWrite.do">- 상품등록</a></li>
 					<!-- <li><a href="">- 할인 적용</a></li> -->
 				</ul></li>

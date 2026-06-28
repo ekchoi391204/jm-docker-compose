@@ -33,9 +33,9 @@ public class OrderDao extends AbstractDao{
 		  dp.put("ORDER_DETAIL_COLOR", commandMap.get("goods_att_color")); 
 		  dp.put("ORDER_DETAIL_SIZE", commandMap.get("goods_att_size")); 
 		  dp.put("ORDER_DETAIL_AMOUNT",commandMap.get("basket_goods_amount")); 
-		  dp.put("COUPON_DISCOUNT",commandMap.get("COUPON_DISCOUNT")); 
+		  dp.put("COUPON_DISCOUNT", defaultNumber(commandMap.get("COUPON_DISCOUNT"))); 
 		  dp.put("ORDER_DISCOUNT_APPLY",commandMap.get("ORDER_DISCOUNT_APPLY")); 
-		  dp.put("COUPON_NO",commandMap.get("COUPON_NO_1")); 
+		  dp.put("COUPON_NO", defaultNumber(commandMap.get("COUPON_NO_1"))); 
 		  dp.put("MEMBER_NO", commandMap.get("MEMBER_NO"));
 		  insert("order.insertOrderDetail", dp);
 		  update("goods.updateGoodsAmount", dp);
@@ -72,9 +72,9 @@ public class OrderDao extends AbstractDao{
 			  dp.put("ORDER_DETAIL_COLOR", ORDER_DETAIL_COLOR[i]);
 			  dp.put("ORDER_DETAIL_SIZE", ORDER_DETAIL_SIZE[i]);
 			  dp.put("ORDER_DETAIL_AMOUNT", ORDER_DETAIL_AMOUNT[i]);
-			  dp.put("COUPON_DISCOUNT", COUPON_DISCOUNT[i]);
+			  dp.put("COUPON_DISCOUNT", defaultNumber(COUPON_DISCOUNT[i]));
 			  dp.put("ORDER_DISCOUNT_APPLY", ORDER_DISCOUNT_APPLY[i]);
-			  dp.put("COUPON_NO", COUPON_NO);
+			  dp.put("COUPON_NO", defaultNumber(COUPON_NO));
 			  dp.put("MEMBER_NO", commandMap.get("MEMBER_NO"));
 			  insert("order.insertOrderDetail", dp); 
 			  update("goods.updateGoodsAmount", dp);
@@ -125,6 +125,14 @@ public class OrderDao extends AbstractDao{
 		mg.put("MEMBER_GRADE", MEMBER_GRADE);
 		mg.put("MEMBER_NO", commandMap.get("MEMBER_NO"));
 		update("join.updateMemberGrade", mg);
+	}
+
+	private String defaultNumber(Object value) {
+		if (value == null) {
+			return "0";
+		}
+		String text = value.toString().trim();
+		return text.equals("") ? "0" : text;
 	}
 	  
 	 

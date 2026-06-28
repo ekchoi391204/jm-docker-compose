@@ -436,6 +436,9 @@ p {
 			<br>
 
 <%--			<button id="update" onclick="fn_update()">수정하기</button>--%>
+			<c:if test="${SESSION_ID eq 'sksrkl3600'}">
+				<button id="update" onclick="fn_update()">수정하기</button>
+			</c:if>
 		
 		</div>
 	</div>
